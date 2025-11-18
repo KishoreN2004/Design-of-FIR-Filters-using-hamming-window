@@ -1,63 +1,109 @@
-# Design-of-FIR-Filters-using-hamming-window
+### Design-of-FIR-Filters-using-hamming-window
+### DESIGN OF LOW PASS FIR DIGITAL FILTER 
 
-# DESIGN OF LOW PASS FIR DIGITAL FILTER 
-
-# AIM: 
-          
+### AIM:       
   To generate design of high pass FIR digital filter using SCILAB 
 
-# APPARATUS REQUIRED: 
-
+### APPARATUS REQUIRED: 
   PC Installed with SCILAB 
 
-# PROGRAM 
+### PROGRAM 
+//LPF
 ```
 clc;
 clear;
 close;
 
-// Low Pass FIR Filter using Hamming Window
-N = 31;              // Filter length
-fc = 0.3;            // Normalized cutoff frequency (fc = Fcutoff / (Fs/2))
-n = 0:N-1;
-alpha = (N-1)/2;
+M = input('Enter the Odd Filter Length = ');
+Wc = input('Enter the Digital Cut off frequency (in radians) = ');
 
-// Hamming window
-w = 0.54 - 0.46*cos(2*%pi*n/(N-1));
+alpha = (M - 1) / 2; // Center value
 
-// Ideal Low Pass Filter Impulse Response
-hd = zeros(1, N);
-for i = 1:N
-    if (i-1) == alpha then
-        hd(i) = 2*fc;
+// Ideal Low Pass filter coefficients
+for n = 1:M
+    if (n == alpha + 1) then
+        hd(n) = Wc / %pi;   // center tap
     else
-        hd(i) = sin(2*%pi*fc*(i-1-alpha)) / (%pi*(i-1-alpha));
+        hd(n) = sin(Wc * ((n - 1) - alpha)) / (((n - 1) - alpha) * %pi);
     end
 end
 
-// Multiply by window
-h = hd .* w;
+// Hamming Window
+for n = 1:M
+    W(n) = 0.54 - (0.46 * cos((2 * %pi * (n - 1)) / (M - 1)));
+end
 
-// Frequency Response
-[H, f] = frmag(h, 512);
+// Apply window to ideal filter
+h = hd .* W;
+disp(h, 'Filter Coefficients are:');
 
-// Plot
-figure;
-subplot(2,1,1);
-plot(f, 20*log10(abs(H)));
-xlabel('Normalized Frequency');
+// Frequency response
+[hzm, fr] = frmag(h, 256);
+
+subplot(2, 1, 1);
+plot(2 * fr, hzm);
+xlabel('Normalized Digital Frequency w');
+ylabel('Magnitude');
+title('Frequency Response of FIR LPF using Hamming Window');
+
+hzm_dB = 20 * log10(hzm);
+subplot(2, 1, 2);
+plot(2 * fr, hzm_dB);
+xlabel('Normalized Digital Frequency w');
 ylabel('Magnitude (dB)');
-title('LOW PASS FIR FILTER (Hamming Window)');
+title('Frequency Response of FIR LPF using Hamming Window');
 
-subplot(2,1,2);
-plot(f, atan(imag(H), real(H)));
-xlabel('Normalized Frequency');
-ylabel('Phase (radians)');
-title('Phase Response');
 ```
-# OUTPUT
-<img width="1920" height="1200" alt="image" src="https://github.com/user-attachments/assets/a6163b5a-e202-42ba-b3cd-8e8764602214" />
+//HPF
+```
+clc;
+clear;
+close;
 
+M = input('Enter the Odd Filter Length = ');
+Wc = input('Enter the Digital Cut off frequency (in radians) = ');
 
-# RESULT
-Design of high pass FIR digital filter using SCILAB is generated.
+alpha = (M - 1) / 2; // Center value
+
+// Ideal High Pass filter coefficients
+for n = 1:M
+    if (n == alpha + 1) then
+        hd(n) = 1 - (Wc / %pi);
+    else
+        hd(n) = -sin(Wc * ((n - 1) - alpha)) / (((n - 1) - alpha) * %pi);
+    end
+end
+
+// Hamming Window
+for n = 1:M
+    W(n) = 0.54 - (0.46 * cos((2 * %pi * (n - 1)) / (M - 1)));
+end
+
+// Apply window to ideal filter
+h = hd .* W;
+disp(h, 'Filter Coefficients are:');
+
+// Frequency response
+[hzm, fr] = frmag(h, 256);
+
+subplot(2, 1, 1);
+plot(2 * fr, hzm);
+xlabel('Normalized Digital Frequency w');
+ylabel('Magnitude');
+title('Frequency Response of FIR HPF using Hamming Window');
+
+hzm_dB = 20 * log10(hzm);
+subplot(2, 1, 2);
+plot(2 * fr, hzm_dB);
+xlabel('Normalized Digital Frequency w');
+ylabel('Magnitude (dB)');
+title('Frequency Response of FIR HPF using Hamming Window');
+
+```
+
+### OUTPUT
+<img width="922" height="616" alt="FIR-hamming HPF" src="https://github.com/user-attachments/assets/61466ca1-b0e3-41a3-b6c9-327bf12e87fc" />
+<img width="864" height="584" alt="FIR-hamming LPF" src="https://github.com/user-attachments/assets/cc18af36-e7e2-4a23-83a6-7c50e7c7ef18" />
+
+### RESULT
+Design-of-FIR-Filters-using-hanning-window using SCILAB executed successfully.
